@@ -1,0 +1,13 @@
+openai
+google.genai
+anthropic
+huggingface_hub
+pandas
+python-dotenv
+scikit-learn
+spacy
+nltk
+matplotlib
+seaborn
+jupyter
+openpyxl
