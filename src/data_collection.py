@@ -7,7 +7,7 @@ import huggingface_hub
 from dotenv import load_dotenv
 import os
 import requests
-from model_call import get_openai_response, get_claude_response, get_qwen_response, get_llama_response
+from model_call import get_openai_response, get_claude_response, get_qwen_response, get_llama_response, get_gemini_response
 
 
 #Reading data
@@ -15,7 +15,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, "..", "data", "prompts.xlsx")
 df = pd.read_excel(file_path)
 
-models = ["gpt", "claude", "qwen", "llama"]
+models = ["gpt", "claude", "gemini","qwen", "llama"]
 results = []
 
 for index, row in df.iterrows():
@@ -28,6 +28,8 @@ for index, row in df.iterrows():
             response = get_openai_response(text)
         elif model =="claude":
             response = get_claude_response(text)
+        elif model =="gemini":
+            response = get_gemini_response(text)
         elif model=="qwen":
             response = get_qwen_response(text)
         elif model=="llama":
@@ -43,5 +45,5 @@ for index, row in df.iterrows():
         })
 
 df_results = pd.DataFrame(results)
-output_path = os.path.join(BASE_DIR, "..", "data", "responses.xlsx")
+output_path = os.path.join(BASE_DIR, "..", "data", "responses2.xlsx")
 df_results.to_excel(output_path, index=False)

@@ -28,7 +28,6 @@ def lexical_diversity(text):
     unique_words = set(words)
     return len(unique_words) / len(words) if words else 0
 
-print(lexical_diversity("the cat sat on the mat the cat"))
 
 def punctuation_frequency(text):
     doc = nlp(text)
@@ -114,6 +113,8 @@ for index, row in df.iterrows():
         "adj_ratio": pos["adj_ratio"],
         "adv_ratio": pos["adv_ratio"]
     })
+
+#final results
 df_features = pd.DataFrame(results)
 output_path = os.path.join(BASE_DIR, "..", "data", "numeric_features.xlsx")
 df_features.to_excel(output_path, index=False)
