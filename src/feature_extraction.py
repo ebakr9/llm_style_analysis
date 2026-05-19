@@ -2,6 +2,7 @@ import pandas as pd
 import spacy
 import os
 from pathlib import Path
+import stylo_metrix as sm
 
 #Reading responses
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -22,11 +23,7 @@ def avg_sentence_length(text):
                 word_count += 1
         lengths.append(word_count)
     return sum(lengths) / len(lengths) if lengths else 0
-#uniqueness
-def lexical_diversity(text):
-    words = text.lower().split()
-    unique_words = set(words)
-    return len(unique_words) / len(words) if words else 0
+
 
 
 def punctuation_frequency(text):
@@ -44,20 +41,7 @@ def punctuation_frequency(text):
     
     return len(punct_tokens) / len(word_tokens) if word_tokens else 0
 
-discourse_markers = [
-    "however", "furthermore", "therefore", "moreover",
-    "nevertheless", "consequently", "in conclusion",
-    "on the other hand", "in addition", "as a result"
-]
-def discourse_marker_frequency(text):
-    text_lower = text.lower()
-    
-    marker_count = 0
-    for marker in discourse_markers:
-        marker_count += text_lower.count(marker)
-    
-    words = text_lower.split()
-    return marker_count / len(words) if words else 0
+
 
 
 def pos_distribution(text):
@@ -92,6 +76,25 @@ def pos_distribution(text):
         "adv_ratio": adv_count / total if total else 0
     }
 
+#Stylometrix features
+sm_nlp = sm.StyloMetrix("en")
+
+#selected features
+SM_FEATURES = ["ST_TYPE_TOKEN_RATIO_LEMMAS",
+    "G_PASSIVE", "G_ACTIVE",
+    "G_PRESENT", "G_PAST",
+    "L_I_PRON", "L_WE_PRON",
+    "PS_CONSEQUENCE", "PS_CONTRADICTION", "PS_AGREEMENT",
+    "SY_NARRATIVE", "SY_QUESTION"
+]
+
+def get_stylometrix_features(text):
+    result = sm_nlp.transform([text])
+    return {feat: result[feat].values[0] for feat in SM_FEATURES}
+
+
+
+
 #mergeing results
 results = []
 
@@ -99,22 +102,25 @@ for index, row in df.iterrows():
     text = row["response"]
     
     pos = pos_distribution(text)
-    
+    sm_feats = get_stylometrix_features(text) 
+
     results.append({
         "prompt_id": row["prompt_id"],
         "category": row["category"],
         "model": row["model"],
         "avg_sentence_length": avg_sentence_length(text),
-        "lexical_diversity": lexical_diversity(text),
         "punctuation_frequency": punctuation_frequency(text),
-        "discourse_marker_frequency": discourse_marker_frequency(text),
         "noun_ratio": pos["noun_ratio"],
         "verb_ratio": pos["verb_ratio"],
         "adj_ratio": pos["adj_ratio"],
-        "adv_ratio": pos["adv_ratio"]
+        "adv_ratio": pos["adv_ratio"],
+        **sm_feats    
     })
+
+
+
 
 #final results
 df_features = pd.DataFrame(results)
-output_path = os.path.join(BASE_DIR, "..", "data", "numeric_features.xlsx")
+output_path = os.path.join(BASE_DIR, "..", "data", "sm_numeric_features.xlsx")
 df_features.to_excel(output_path, index=False)
