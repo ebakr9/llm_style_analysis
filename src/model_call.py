@@ -70,23 +70,6 @@ def get_gemini_response(prompt_text):
 
 
 API_URL_QWEN = "https://router.huggingface.co/v1/chat/completions"
-
-"""def get_qwen_response(prompt_text):
-    headers = {
-        "Authorization": f"Bearer {hf_api_key}"
-    }
-    payload = {
-        "model": "Qwen/Qwen2.5-7B-Instruct:together",
-        "messages": [
-            {"role": "system", "content": "You are a helpful assistant. Do not use markdown formatting, headers, or bullet points in your responses."},
-            {"role": "user", "content": prompt_text}
-        ],
-        "temperature": 0.7,
-        "max_tokens": 300
-    }
-    response = requests.post(API_URL_QWEN, headers=headers, json=payload)
-    return response.json()["choices"][0]["message"]["content"]"""
-
 def get_qwen_response(prompt_text):
     headers = {
         "Authorization": f"Bearer {hf_api_key}"
@@ -101,7 +84,6 @@ def get_qwen_response(prompt_text):
         "max_tokens": 300
     }
     response = requests.post(API_URL_QWEN, headers=headers, json=payload)
-    print(response.json())  # geçici olarak ekle
     return response.json()["choices"][0]["message"]["content"]
 
 

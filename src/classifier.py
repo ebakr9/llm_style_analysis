@@ -65,7 +65,7 @@ results = results.sort_values("balanced_score", ascending=False)
 print(results.head(10).to_string(index=False))
 
 
-# Final model - seçilen parametrelerle
+# Final model w selected parameters
 best_model = RandomForestClassifier(
     max_depth=3,
     min_samples_leaf=5,
