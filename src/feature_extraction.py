@@ -7,7 +7,7 @@ import stylo_metrix as sm
 #Reading responses
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, "..", "data", "responses.xlsx")
-df = pd.read_excel(file_path)
+df_extractor = pd.read_excel(file_path)
 
 nlp = spacy.load("en_core_web_sm")
 
@@ -25,7 +25,7 @@ def avg_sentence_length(text):
     return sum(lengths) / len(lengths) if lengths else 0
 
 
-
+#Punctuation frequency
 def punctuation_frequency(text):
     doc = nlp(text)
     
@@ -43,7 +43,7 @@ def punctuation_frequency(text):
 
 
 
-
+#POS distributions
 def pos_distribution(text):
     doc = nlp(text)
     
@@ -98,7 +98,7 @@ def get_stylometrix_features(text):
 #mergeing results
 results = []
 
-for index, row in df.iterrows():
+for index, row in df_extractor.iterrows():
     text = row["response"]
     
     pos = pos_distribution(text)

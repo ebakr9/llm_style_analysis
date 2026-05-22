@@ -14,8 +14,8 @@ from sklearn.manifold import TSNE
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 #variables
-df = pd.read_excel(os.path.join(BASE_DIR, "..", "data", "sm_numeric_features.xlsx"))
-X = df[[
+df_visualization = pd.read_excel(os.path.join(BASE_DIR, "..", "data", "sm_numeric_features.xlsx"))
+X = df_visualization[[
     "avg_sentence_length",
     "punctuation_frequency", 
     "noun_ratio", "verb_ratio", "adj_ratio", "adv_ratio",
@@ -60,7 +60,7 @@ plt.xlabel("Importance Score")
 plt.tight_layout()
 plt.show()
 
-"""""
+
 #SHAP values visualization
 shap_values = np.load(os.path.join(BASE_DIR, "..", "data", "shap_values.npy"))
 
@@ -71,7 +71,7 @@ for i, model_name in enumerate(class_names):
     shap.summary_plot(shap_vals_model, X, plot_type="dot", show=False)
     plt.title(f"SHAP Summary — {model_name}", fontsize=14)
     plt.tight_layout()
-    plt.show()"""""
+    plt.show()
 
 
 category = results["category"]
@@ -95,8 +95,8 @@ X_pca = pca.fit_transform(X_scaled)
 plt.figure(figsize=(10, 8))
 colors = {"claude": "blue", "gemini": "green", "gpt": "red", "llama": "purple", "qwen": "orange"}
 
-for model_name in df["model"].unique():
-    mask = df["model"] == model_name
+for model_name in df_visualization["model"].unique():
+    mask = df_visualization["model"] == model_name
     plt.scatter(X_pca[mask, 0], X_pca[mask, 1], 
                 label=model_name, 
                 color=colors[model_name],
@@ -114,8 +114,8 @@ tsne = TSNE(n_components=2, random_state=42, perplexity=30)
 X_tsne = tsne.fit_transform(X_scaled)
 
 plt.figure(figsize=(10, 8))
-for model_name in df["model"].unique():
-    mask = df["model"] == model_name
+for model_name in df_visualization["model"].unique():
+    mask = df_visualization["model"] == model_name
     plt.scatter(X_tsne[mask, 0], X_tsne[mask, 1],
                 label=model_name,
                 color=colors[model_name],
@@ -136,8 +136,8 @@ genre_colors = {
 }
 
 plt.figure(figsize=(10, 8))
-for cat in df["category"].unique():
-    mask = df["category"] == cat
+for cat in df_visualization["category"].unique():
+    mask = df_visualization["category"] == cat
     plt.scatter(X_tsne[mask, 0], X_tsne[mask, 1],
                 label=cat,
                 color=genre_colors[cat],
