@@ -22,7 +22,7 @@ for index, row in df.iterrows():
     prompt_id = row["id_prompt"]
     category = row["category"]
     text = row["text"]
-    print(index)
+    print(index)  
     for model in models:
         if model =="gpt":
             response = get_openai_response(text)

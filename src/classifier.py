@@ -14,7 +14,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(BASE_DIR, "..", "data", "sm_numeric_features.xlsx")
 df = pd.read_excel(file_path)
 
-#variables
+# 14 features selected from the full 21 extracted — these showed the most
+# discriminating power between models during exploratory analysis.
 X = df[[
     "avg_sentence_length",
     "punctuation_frequency", 
@@ -27,7 +28,7 @@ X = df[[
 ]]
 y = df["model"]
 
-#RF model setup & cv
+#RF model setup & stratifiedkfold cv
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
 #gridsearch parameters
@@ -41,7 +42,7 @@ grid_search = GridSearchCV(
     param_grid,
     cv=cv,
     scoring="accuracy",
-    n_jobs=-1
+    n_jobs=-1 
 )
 
 grid_search.fit(X, y)
@@ -56,7 +57,8 @@ for params in results["params"]:
     model.fit(X, y)
     train_scores.append(model.score(X, y))
 
-#choosing best params for both overfit and acc
+# Choose the best parameters by balancing accuracy and overfitting.
+# balanced_score penalises models with a large gap, so we prefer generalisable models.
 results["train_accuracy"] = train_scores
 results["overfit_gap"] = results["train_accuracy"] - results["mean_test_score"]
 results["balanced_score"] = results["mean_test_score"] - 0.5 * results["overfit_gap"]
@@ -78,6 +80,7 @@ y_pred = cross_val_predict(best_model, X, y, cv=cv)
 print(f"Accuracy: {scores.mean():.2f} (+/- {scores.std():.2f})")
 print(classification_report(y, y_pred))
 
+#Refit on the full dataset to compute SHAP values over all samples.
 best_model.fit(X, y)
 print(f"Train accuracy: {best_model.score(X, y):.2f}")
 print(f"Test accuracy (CV): {scores.mean():.2f}")
@@ -87,7 +90,7 @@ explainer = shap.TreeExplainer(best_model)
 shap_values = explainer.shap_values(X)
 np.save(os.path.join(BASE_DIR, "..", "data", "shap_values.npy"), shap_values)
 
-#Confusion matrix save w pickle
+#Confusion matrix save w pickle to call in other files
 with open(os.path.join(BASE_DIR, "..", "data", "classifier_results.pkl"), "wb") as f:
     pickle.dump({
         "y_true": y,

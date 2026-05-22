@@ -45,6 +45,7 @@ def punctuation_frequency(text):
 
 #POS distributions
 def pos_distribution(text):
+    """Return noun, verb, adjective, and adverb ratios as a dictionary."""
     doc = nlp(text)
     
     words = []
@@ -79,7 +80,9 @@ def pos_distribution(text):
 #Stylometrix features
 sm_nlp = sm.StyloMetrix("en")
 
-#selected features
+# These features were selected because they cover different aspects of writing style:
+# vocabulary richness (TTR), grammar choices (passive/active, tense),
+# pronoun use, and discourse markers (agreement, contradiction).
 SM_FEATURES = ["ST_TYPE_TOKEN_RATIO_LEMMAS",
     "G_PASSIVE", "G_ACTIVE",
     "G_PRESENT", "G_PAST",

@@ -72,13 +72,14 @@ for i, model_name in enumerate(class_names):
     shap_vals_model = shap_values[:, :, i]
     
     plt.figure(figsize=(10, 8))
-    shap.summary_plot(shap_vals_model, X, plot_type="dot", show=False)
+    shap.summary_plot(shap_vals_model, X, plot_type="dot", show=False)  
     plt.title(f"SHAP Summary — {model_name}", fontsize=14)
     plt.tight_layout()
     plt.savefig(os.path.join(FIGURES_DIR, f"shap_{model_name}.png"), bbox_inches="tight", dpi=150)
     plt.show()
 
 
+#Accuracy by categories
 category = results["category"]
 
 print("Accuracy by genre:\n")
@@ -90,7 +91,7 @@ for cat in pd.Series(category).unique():
     print(f"{cat}: {acc:.2f}")
 
 
-#PCA
+#scaling for PCA and t-SNE because of sensitivity of these analysis
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
@@ -115,7 +116,7 @@ plt.tight_layout()
 plt.savefig(os.path.join(FIGURES_DIR, "pca_models.png"), bbox_inches="tight", dpi=150)
 plt.show()
 
-#t-sne
+#tSNE model based
 tsne = TSNE(n_components=2, random_state=42, perplexity=30)
 X_tsne = tsne.fit_transform(X_scaled)
 

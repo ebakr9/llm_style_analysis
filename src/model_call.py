@@ -46,8 +46,13 @@ client_gemini = genai.Client(api_key=gemini_api_key)
 
 
 def get_gemini_response(prompt_text):
+    """
+    Retries up to 3 times with increasing wait times because Gemini has
+    strict rate limits during batch data collection.
+    Returns None if all attempts fail.
+    """
     wait_times = [10, 30, 60]
-    
+
     for attempt, wait in enumerate(wait_times):
         try:
             response = client_gemini.models.generate_content(
@@ -57,7 +62,7 @@ def get_gemini_response(prompt_text):
                     system_instruction="You are a helpful assistant. Do not use markdown formatting, headers, or bullet points in your responses.",
                     temperature=0.7,
                     max_output_tokens=300,
-                    thinking_config=genai.types.ThinkingConfig(thinking_budget=0)
+                    thinking_config=genai.types.ThinkingConfig(thinking_budget=0)  # disable thinking mode for fair comparison
                 )
             )
             return response.text
@@ -69,6 +74,7 @@ def get_gemini_response(prompt_text):
     return None
 
 
+# Qwen and Llama are accessed via the HuggingFace Inference
 API_URL_QWEN = "https://router.huggingface.co/v1/chat/completions"
 def get_qwen_response(prompt_text):
     headers = {
