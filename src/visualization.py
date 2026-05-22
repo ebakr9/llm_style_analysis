@@ -12,6 +12,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.manifold import TSNE
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FIGURES_DIR = os.path.join(BASE_DIR, "..", "figures")
+os.makedirs(FIGURES_DIR, exist_ok=True)
 
 #variables
 df_visualization = pd.read_excel(os.path.join(BASE_DIR, "..", "data", "sm_numeric_features.xlsx"))
@@ -49,6 +51,7 @@ disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=class_names)
 disp.plot(cmap="Blues")
 plt.title("Confusion Matrix")
 plt.tight_layout()
+plt.savefig(os.path.join(FIGURES_DIR, "confusion_matrix.png"), bbox_inches="tight", dpi=150)
 plt.show()
 
 #feature importance
@@ -58,6 +61,7 @@ importances_sorted.plot(kind="barh")
 plt.title("Feature Importance")
 plt.xlabel("Importance Score")
 plt.tight_layout()
+plt.savefig(os.path.join(FIGURES_DIR, "feature_importance.png"), bbox_inches="tight", dpi=150)
 plt.show()
 
 
@@ -71,6 +75,7 @@ for i, model_name in enumerate(class_names):
     shap.summary_plot(shap_vals_model, X, plot_type="dot", show=False)
     plt.title(f"SHAP Summary — {model_name}", fontsize=14)
     plt.tight_layout()
+    plt.savefig(os.path.join(FIGURES_DIR, f"shap_{model_name}.png"), bbox_inches="tight", dpi=150)
     plt.show()
 
 
@@ -107,6 +112,7 @@ plt.ylabel(f"PC2 ({pca.explained_variance_ratio_[1]*100:.1f}%)")
 plt.title("PCA — Stylistic Space of LLMs")
 plt.legend()
 plt.tight_layout()
+plt.savefig(os.path.join(FIGURES_DIR, "pca_models.png"), bbox_inches="tight", dpi=150)
 plt.show()
 
 #t-sne
@@ -126,6 +132,7 @@ plt.ylabel("t-SNE 2")
 plt.title("t-SNE — Stylistic Space of LLMs")
 plt.legend()
 plt.tight_layout()
+plt.savefig(os.path.join(FIGURES_DIR, "tsne_models.png"), bbox_inches="tight", dpi=150)
 plt.show()
 
 #tsne genre based
@@ -146,4 +153,5 @@ for cat in df_visualization["category"].unique():
 plt.title("t-SNE — Colored by Genre")
 plt.legend()
 plt.tight_layout()
+plt.savefig(os.path.join(FIGURES_DIR, "tsne_genres.png"), bbox_inches="tight", dpi=150)
 plt.show()
