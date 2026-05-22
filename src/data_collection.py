@@ -45,5 +45,5 @@ for index, row in df.iterrows():
         })
 
 df_results = pd.DataFrame(results)
-output_path = os.path.join(BASE_DIR, "..", "data", "responses2.xlsx")
+output_path = os.path.join(BASE_DIR, "..", "data", "responses.xlsx")
 df_results.to_excel(output_path, index=False)
